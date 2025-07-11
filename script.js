@@ -7,7 +7,7 @@ function playClickSound() {
 }
 
 function isOperator(char) {
-  return ['+', '-', '*', '/'].includes(char);
+  return ['+', '-', '*', '/', '^'].includes(char);
 }
 
 function press(val) {
@@ -22,12 +22,27 @@ function press(val) {
     }
   }
 
+  if (val === "%") {
+    display.value += "/100";
+    return;
+  }
+
+  if (val === "^") {
+    display.value += "**";
+    return;
+  }
+
   display.value += val;
 }
 
 function clearDisplay() {
   playClickSound();
   display.value = "";
+}
+
+function backspace() {
+  playClickSound();
+  display.value = display.value.slice(0, -1);
 }
 
 function calculate() {
@@ -46,16 +61,11 @@ function toggleTheme() {
 
 document.addEventListener("keydown", function (e) {
   const key = e.key;
-  if (/[\d+\-*/.]/.test(key)) {
-    press(key);
+  if (/[\d+\-*/().^]/.test(key)) {
+    if (key === "^") press("^");
+    else press(key);
   }
-  if (key === "Enter") {
-    calculate();
-  }
-  if (key === "Escape" || key.toLowerCase() === "c") {
-    clearDisplay();
-  }
-  if (key === "Backspace") {
-    display.value = display.value.slice(0, -1);
-  }
+  if (key === "Enter") calculate();
+  if (key === "Escape" || key.toLowerCase() === "c") clearDisplay();
+  if (key === "Backspace") backspace();
 });
